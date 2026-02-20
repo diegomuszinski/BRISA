@@ -282,12 +282,18 @@ O sistema possui 3 tipos de perfis:
    - Acesso a todos os relatórios
    - Configurações do sistema
 
-2. **TECNICO** - Atendimento de chamados
+2. **GESTOR** - Atendimento de chamados
+   - Direcionar chamados
    - Visualização e atendimento de tickets atribuídos
    - Atualização de status
    - Registro de soluções
 
-3. **USUARIO** - Solicitante
+3. **TECNICO** - Atendimento de chamados
+   - Visualização e atendimento de tickets atribuídos
+   - Atualização de status
+   - Registro de soluções
+
+4. **USUARIO** - Solicitante
    - Abertura de chamados
    - Acompanhamento de tickets próprios
    - Avaliação de satisfação
