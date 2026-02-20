@@ -1,0 +1,112 @@
+-- ==========================================================
+-- SCRIPT DE INSTALAÇÃO DO BANCO DE DADOS - HELPDESK
+-- DATA: 03/01/2026
+-- VERSÃO: FINAL (Senha Admin corrigida para 123456)
+-- ==========================================================
+
+-- 1. LIMPEZA PREVENTIVA
+DROP TABLE IF EXISTS public.anexos_chamados CASCADE;
+DROP TABLE IF EXISTS public.historico_chamados CASCADE;
+DROP TABLE IF EXISTS public.pesquisas_satisfacao CASCADE;
+DROP TABLE IF EXISTS public.chamados CASCADE;
+DROP TABLE IF EXISTS public.usuarios CASCADE;
+DROP TABLE IF EXISTS public.equipes CASCADE;
+DROP TABLE IF EXISTS public.categorias CASCADE;
+DROP TABLE IF EXISTS public.problemas CASCADE;
+
+
+
+-- 2. CRIAÇÃO DAS TABELAS
+
+CREATE TABLE public.categorias (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE public.problemas (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) UNIQUE NOT NULL,
+    prioridade_padrao VARCHAR(50) NOT NULL 
+);
+
+CREATE TABLE public.equipes (
+    id SERIAL PRIMARY KEY,
+    nome_equipe VARCHAR(255) UNIQUE NOT NULL
+);
+
+CREATE TABLE public.usuarios (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    login VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    senha VARCHAR(255) NOT NULL,        
+    perfil VARCHAR(50) NOT NULL,        
+    id_equipe INTEGER,                  
+    data_criacao TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_equipe) REFERENCES public.equipes(id) ON DELETE SET NULL
+);
+
+CREATE TABLE public.chamados (
+    id SERIAL PRIMARY KEY,
+    numero_chamado VARCHAR(50) UNIQUE NOT NULL, 
+    descricao TEXT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    prioridade VARCHAR(50) NOT NULL,
+    data_abertura TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    data_fechamento TIMESTAMP WITH TIME ZONE,
+    solucao TEXT,
+    foi_reaberto BOOLEAN DEFAULT FALSE,
+    id_solicitante INTEGER NOT NULL,
+    id_tecnico_atribuido INTEGER,
+    id_categoria INTEGER,
+    id_problema INTEGER,
+    FOREIGN KEY (id_solicitante) REFERENCES public.usuarios(id) ON DELETE RESTRICT,
+    FOREIGN KEY (id_tecnico_atribuido) REFERENCES public.usuarios(id) ON DELETE SET NULL,
+    FOREIGN KEY (id_categoria) REFERENCES public.categorias(id),
+    FOREIGN KEY (id_problema) REFERENCES public.problemas(id)
+);
+
+CREATE TABLE public.anexos_chamados (
+    id SERIAL PRIMARY KEY,
+    nome_arquivo VARCHAR(255) NOT NULL,
+    tipo_arquivo VARCHAR(100) NOT NULL,
+    dados TEXT NOT NULL,
+    id_chamado INTEGER NOT NULL,
+    data_upload TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_chamado) REFERENCES public.chamados(id) ON DELETE CASCADE
+);
+
+CREATE TABLE public.historico_chamados (
+    id SERIAL PRIMARY KEY,
+    id_chamado INTEGER NOT NULL,
+    id_autor INTEGER,
+    acao VARCHAR(100),
+    comentario TEXT NOT NULL,
+    data_hora TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_chamado) REFERENCES public.chamados(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_autor) REFERENCES public.usuarios(id) ON DELETE SET NULL
+);
+
+CREATE TABLE public.pesquisas_satisfacao (
+    id SERIAL PRIMARY KEY,
+    id_chamado INTEGER UNIQUE NOT NULL,
+    nota INTEGER NOT NULL CHECK (nota >= 1 AND nota <= 5),
+    comentario TEXT,
+    data_resposta TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_chamado) REFERENCES public.chamados(id) ON DELETE CASCADE
+);
+
+-- 3. CARGA INICIAL (Admin sem equipe)
+-- Login: admin
+-- Senha: 123456
+INSERT INTO public.usuarios (nome, login, email, senha, perfil, id_equipe, data_criacao)
+VALUES (
+    'Administrador do Sistema',
+    'admin', 
+    'admin@suporte.com', 
+    '$2a$12$FMtEV92PE1A2UN53tp7b..LBLQxmltKRvSmb8StPRMB/BrniY02h2', 
+    'admin',
+    NULL, 
+    NOW()
+);
+

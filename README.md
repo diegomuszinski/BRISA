@@ -372,15 +372,3 @@ npm run format       # Formata o código com Prettier
 1. Limpe o localStorage do navegador
 2. Verifique se o token JWT está válido
 3. Confirme que o usuário existe no banco de dados
-
-## 📄 Licença
-
-Este projeto é propriedade da BRISA.
-
-## 📞 Suporte
-
-Para suporte e dúvidas, entre em contato com a equipe de desenvolvimento.
-
----
-
-**Desenvolvido com ❤️ pela equipe BRISA**

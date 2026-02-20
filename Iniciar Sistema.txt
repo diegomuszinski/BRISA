@@ -1,0 +1,14 @@
+
+
+
+Iniciar Back-end: ./gradlew bootRun
+
+
+Iniciar Front-end: npm run dev
+
+
+
+Nome e senha "Banco de Dados"
+
+username=postgres
+password=admin
